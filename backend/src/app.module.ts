@@ -6,10 +6,18 @@ import { AuthModule } from './auth/auth.module';
 import { GoalsModule } from './goals/goals.module';
 import { TasksModule } from './tasks/tasks.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [UsersModule, AuthModule, GoalsModule, TasksModule, PrismaModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    UsersModule,
+    AuthModule,
+    GoalsModule,
+    TasksModule,
+    PrismaModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

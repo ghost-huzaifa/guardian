@@ -1,16 +1,29 @@
-import { Shield, Sparkles, Trophy, Zap } from "lucide-react";
+"use client";
+
+import { Shield, Sparkles, Trophy, Zap, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api";
+import { useAuthStore } from "@/lib/auth-store";
+import { format } from "date-fns";
 
 export default function DashboardPage() {
+    const user = useAuthStore((state) => state.user);
+
+    const { data: tasks, isLoading } = useQuery({
+        queryKey: ['tasks', 'today'],
+        queryFn: () => apiFetch<any[]>('/tasks/today'),
+    });
+
     return (
         <div className="space-y-8">
             {/* Welcome Banner */}
             <div className="relative overflow-hidden rounded-3xl bg-accent-purple p-8 text-bg-primary shadow-lg shadow-accent-purple/20">
                 <div className="relative z-10">
                     <h1 className="font-display text-4xl font-bold tracking-tight md:text-5xl">
-                        Good evening, Huzaifa! ✨
+                        Good evening, {user?.firstName || 'Guardian'}! ✨
                     </h1>
                     <p className="mt-2 font-mono text-lg font-medium opacity-90">
-                        You've crushed 5 tasks today. Keep the streak alive!
+                        You've crushed {tasks?.filter(t => t.taskStatus === 'DONE').length || 0} tasks today. Keep the streak alive!
                     </p>
                 </div>
 
@@ -73,44 +86,45 @@ export default function DashboardPage() {
                 </h2>
 
                 <div className="space-y-3">
-                    {/* Mock Task 1 */}
-                    <div className="group flex cursor-pointer items-center gap-4 rounded-3xl border-2 border-white/5 bg-bg-elevated p-4 transition-all hover:border-accent-purple/50 hover:bg-bg-secondary">
-                        <div className="flex h-6 w-6 flex-none items-center justify-center rounded-lg border-2 border-text-muted transition-colors group-hover:border-accent-purple" />
-                        <div className="flex-1">
-                            <h3 className="font-medium text-text-primary">
-                                Read Chapter 1 of Linear Algebra
-                            </h3>
-                            <div className="mt-1 flex items-center gap-2">
-                                <span className="rounded-full bg-priority-p1/20 px-2 py-0.5 text-[10px] font-bold text-priority-p1">
-                                    P1 URGENT
-                                </span>
-                                <span className="font-mono text-[10px] text-text-muted">
-                                    High Focus • 45m
-                                </span>
+                    {isLoading ? (
+                        <div className="flex justify-center py-8">
+                            <Loader2 className="h-8 w-8 animate-spin text-accent-purple" />
+                        </div>
+                    ) : tasks && tasks.length > 0 ? (
+                        tasks.map((task: any) => (
+                            <div key={task.taskId} className="group flex cursor-pointer items-center gap-4 rounded-3xl border-2 border-white/5 bg-bg-elevated p-4 transition-all hover:border-accent-purple/50 hover:bg-bg-secondary">
+                                <div className={`flex h-6 w-6 flex-none items-center justify-center rounded-lg border-2 transition-colors ${task.isCompleted ? 'bg-accent-green border-accent-green' : 'border-text-muted group-hover:border-accent-purple'}`}>
+                                    {task.isCompleted && <Shield className="h-4 w-4 text-bg-primary fill-current" />}
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className={`font-medium ${task.isCompleted ? 'text-text-muted line-through' : 'text-text-primary'}`}>
+                                        {task.title}
+                                    </h3>
+                                    <div className="mt-1 flex items-center gap-2">
+                                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${task.taskPriority === 'P1_URGENT' ? 'bg-priority-p1/20 text-priority-p1' :
+                                                task.taskPriority === 'P2_HIGH' ? 'bg-priority-p2/20 text-priority-p2' :
+                                                    task.taskPriority === 'P3_MEDIUM' ? 'bg-priority-p3/20 text-priority-p3' :
+                                                        'bg-priority-p4/20 text-priority-p4'
+                                            }`}>
+                                            {task.taskPriority?.replace('P', '').replace('_', ' ')}
+                                        </span>
+                                        <span className="font-mono text-[10px] text-text-muted">
+                                            {task.energyLevel?.toLowerCase().replace('_', ' ')} • {task.estimatedMinutes}m
+                                        </span>
+                                    </div>
+                                </div>
+                                {task.goal && (
+                                    <div className="hidden rounded-xl bg-bg-primary px-3 py-1 font-mono text-xs text-accent-pink md:block">
+                                        → {task.goal.title}
+                                    </div>
+                                )}
                             </div>
+                        ))
+                    ) : (
+                        <div className="rounded-3xl border-2 border-dashed border-white/10 p-8 text-center text-text-muted">
+                            No active quests for today. Check your quest log!
                         </div>
-                        <div className="hidden rounded-xl bg-bg-primary px-3 py-1 font-mono text-xs text-accent-pink md:block">
-                            → Complete Master's
-                        </div>
-                    </div>
-
-                    {/* Mock Task 2 */}
-                    <div className="group flex cursor-pointer items-center gap-4 rounded-3xl border-2 border-white/5 bg-bg-elevated p-4 transition-all hover:border-accent-orange/50 hover:bg-bg-secondary">
-                        <div className="flex h-6 w-6 flex-none items-center justify-center rounded-lg border-2 border-text-muted transition-colors group-hover:border-accent-orange" />
-                        <div className="flex-1">
-                            <h3 className="font-medium text-text-primary">
-                                Review PR for auth module
-                            </h3>
-                            <div className="mt-1 flex items-center gap-2">
-                                <span className="rounded-full bg-priority-p3/20 px-2 py-0.5 text-[10px] font-bold text-priority-p3">
-                                    P3 MEDIUM
-                                </span>
-                                <span className="font-mono text-[10px] text-text-muted">
-                                    Medium Energy
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </div>

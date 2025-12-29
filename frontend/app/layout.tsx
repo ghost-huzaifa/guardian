@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   description: "Your friendly productivity guardian.",
 };
 
+import { Providers } from "@/components/providers";
+
+// ... (imports)
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,7 +32,7 @@ export default function RootLayout({
       <body
         className={`${spaceMono.variable} ${spaceGrotesk.variable} antialiased`}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
