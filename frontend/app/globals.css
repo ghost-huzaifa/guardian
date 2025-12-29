@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+:root {
+  /* 🌈 Playful Guardian Palette */
+  
+  /* Backgrounds - Soft, warm tones */
+  --bg-primary: #1e1e2e;        /* Dark purple-gray (Catppuccin Mocha) */
+  --bg-secondary: #2a2a3e;      /* Slightly lighter */
+  --bg-elevated: #363654;       /* Cards, modals */
+  --bg-glow: #44446688;         /* Subtle glow effects */
+
+  /* Accent Colors - Vibrant & Playful */
+  --accent-purple: #cba6f7;     /* Primary brand */
+  --accent-pink: #f5c2e7;       /* Life goals */
+  --accent-blue: #89dceb;       /* Info */
+  --accent-green: #a6e3a1;      /* Success */
+  --accent-yellow: #f9e2af;     /* Warning */
+  --accent-orange: #fab387;     /* In progress */
+  --accent-red: #f38ba8;        /* Urgent */
+  --accent-teal: #94e2d5;       /* Calm */
+
+  /* Text */
+  --text-primary: #cdd6f4;
+  --text-muted: #9399b2;
+  --text-accent: #f5c2e7;
+
+  /* Goal Types */
+  --goal-life: #f5c2e7;
+  --goal-yearly: #cba6f7;
+  --goal-monthly: #89b4fa;
+  --goal-weekly: #94e2d5;
+  --goal-isolated: #9399b2;
+
+  /* Priority Badges */
+  --priority-p1: #f38ba8;
+  --priority-p2: #fab387;
+  --priority-p3: #89b4fa;
+  --priority-p4: #9399b2;
+  
+  /* Radius */
+  --radius-xl: 1.5rem;   /* Very rounded */
+  --radius-lg: 1rem;
+  --radius-md: 0.75rem;
+}
+
+@theme inline {
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-glow: var(--bg-glow);
+  
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-pink: var(--accent-pink);
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-green: var(--accent-green);
+  --color-accent-yellow: var(--accent-yellow);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-red: var(--accent-red);
+  --color-accent-teal: var(--accent-teal);
+  
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-text-accent: var(--text-accent);
+  
+  --color-goal-life: var(--goal-life);
+  --color-goal-yearly: var(--goal-yearly);
+  --color-goal-monthly: var(--goal-monthly);
+  --color-goal-weekly: var(--goal-weekly);
+  --color-goal-isolated: var(--goal-isolated);
+  
+  --color-priority-p1: var(--priority-p1);
+  --color-priority-p2: var(--priority-p2);
+  --color-priority-p3: var(--priority-p3);
+  --color-priority-p4: var(--priority-p4);
+
+  --font-mono: var(--font-space-mono), monospace;
+  --font-display: var(--font-space-grotesk), sans-serif;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}

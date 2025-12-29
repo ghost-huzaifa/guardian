@@ -9,3 +9,15 @@ To create the database in an existing PostgreSQL container, run:
 ```bash
 docker exec -it <container_name> psql -U postgres -c "CREATE DATABASE guardian;"
 ```
+
+## Frontend
+
+Run the development server:
+
+```bash
+cd frontend
+yarn install
+yarn dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
