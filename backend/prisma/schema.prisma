@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  userId    String  @id @default(uuid())
+  firstName String
+  lastName  String?
+  email     String  @unique
+  password  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  goals Goal[]
+  tasks Task[]
+}
+
+model Goal {
+  goalId          String   @id @default(uuid())
+  orderNo         Int      @default(0)
+  title           String
+  description     String?
+  goalType        GoalType @default(ISOLATED)
+  isCompleted     Boolean  @default(false)
+  progressPercent Int      @default(0) // 0-100
+
+  dueDate   DateTime? // When is the goal due?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  parentGoalId String?
+  parentGoal   Goal?   @relation("goalHierarchy", fields: [parentGoalId], references: [goalId], onDelete: SetNull)
+
+  user   User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  userId String
+
+  subGoals Goal[] @relation("goalHierarchy")
+  tasks    Task[]
+}
+
+model Task {
+  taskId       String       @id @default(uuid())
+  orderNo      Int          @default(0)
+  title        String
+  description  String?
+  taskStatus   TaskStatus   @default(TODO)
+  energyLevel  EnergyLevel  @default(HIGH_FOCUS)
+  taskPriority TaskPriority @default(P3_MEDIUM)
+
+  dueDate          DateTime? // When is the task due?
+  scheduledFor     DateTime? // When do you plan to work on it?
+  completedAt      DateTime? // When was it actually completed?
+  estimatedMinutes Int?
+  actualMinutes    Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [userId])
+
+  goalId String?
+  goal   Goal?   @relation(fields: [goalId], references: [goalId], onDelete: Cascade)
+
+  @@index([userId, goalId]) // For efficient queries
+}
+
+enum GoalType {
+  LIFE
+  YEARLY
+  MONTHLY
+  WEEKLY
+  ISOLATED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+  CANCELLED
+}
+
+enum EnergyLevel {
+  HIGH_FOCUS // Deep work
+  MEDIUM // Regular tasks
+  LOW_ENERGY // Can do when tired
+}
+
+enum TaskPriority {
+  P1_URGENT
+  P2_HIGH
+  P3_MEDIUM
+  P4_LOW
+}
