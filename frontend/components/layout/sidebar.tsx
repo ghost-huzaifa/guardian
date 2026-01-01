@@ -10,11 +10,13 @@ import {
     Inbox,
     Settings,
     Shield,
-    Plus,
+    LogOut,
 } from "lucide-react";
+import { useAuthStore } from "@/lib/auth-store";
 
 export function Sidebar() {
     const pathname = usePathname();
+    const logout = useAuthStore((state) => state.logout);
 
     const navItems = [
         { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
@@ -63,8 +65,8 @@ export function Sidebar() {
             </nav>
 
             {/* Bottom Actions */}
-            <div className="mt-auto space-y-4">
-                <div className="rounded-3xl bg-bg-elevated p-4">
+            <div className="mt-auto space-y-2">
+                <div className="mb-4 rounded-3xl bg-bg-elevated p-4">
                     <p className="mb-2 font-mono text-xs text-text-muted">
                         Daily Progress
                     </p>
@@ -76,10 +78,19 @@ export function Sidebar() {
                     </p>
                 </div>
 
-                <button className="group flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-white/10 p-3 font-mono text-sm font-bold text-text-muted transition-all hover:bg-bg-elevated hover:text-text-primary">
-                    <Settings className="h-5 w-5 transition-transform group-hover:rotate-90" />
-                    Settings
-                </button>
+                <div className="flex flex-col gap-2">
+                    <button className="group flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-white/10 p-3 font-mono text-sm font-bold text-text-muted transition-all hover:bg-bg-elevated hover:text-text-primary">
+                        <Settings className="h-5 w-5 transition-transform group-hover:rotate-90" />
+                        Settings
+                    </button>
+                    <button
+                        onClick={() => logout()}
+                        className="group flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-white/10 p-3 font-mono text-sm font-bold text-accent-red/70 transition-all hover:bg-accent-red/10 hover:text-accent-red"
+                    >
+                        <LogOut className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
+                        Log Out
+                    </button>
+                </div>
             </div>
         </aside>
     );

@@ -3,12 +3,13 @@
 import { Shield, Sparkles, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import { useAuthStore } from "@/lib/auth-store";
 
 export default function LoginPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const setAuth = useAuthStore((state) => state.setAuth);
 
     const [email, setEmail] = useState("wizard@guardian.gg");
@@ -35,7 +36,9 @@ export default function LoginPage() {
             }
 
             setAuth(data.user, data.access_token);
-            router.push('/dashboard');
+
+            const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+            router.push(callbackUrl);
         } catch (err: any) {
             setError(err.message || "Something went wrong");
         } finally {
