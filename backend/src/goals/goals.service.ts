@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { CreateGoalDto } from './dto/create-goal.dto';
+import { UpdateGoalDto } from './dto/update-goal.dto';
 
 @Injectable()
 export class GoalsService {
@@ -35,11 +36,16 @@ export class GoalsService {
         })
     }
 
-    async create(data: Prisma.GoalCreateInput) {
-        return this.prisma.goal.create({ data });
+    async create(userId: string, data: CreateGoalDto) {
+        return this.prisma.goal.create({
+            data: {
+                ...data,
+                userId,
+            }
+        });
     }
 
-    async update(id: string, data: Prisma.GoalUpdateInput) {
+    async update(id: string, data: UpdateGoalDto) {
         return this.prisma.goal.update({
             where: { goalId: id },
             data,

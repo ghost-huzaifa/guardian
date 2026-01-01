@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request }
 import { GoalsService } from './goals.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Prisma } from '@prisma/client';
+import { CreateGoalDto } from './dto/create-goal.dto';
+import { UpdateGoalDto } from './dto/update-goal.dto';
 
 @Controller('goals')
 @UseGuards(AuthGuard('jwt'))
@@ -19,12 +21,12 @@ export class GoalsController {
     }
 
     @Post()
-    create(@Request() req, @Body() data: Prisma.GoalCreateInput) {
-        return this.goalsService.create({ ...data, user: { connect: { userId: req.user.userId } } });
+    create(@Request() req, @Body() data: CreateGoalDto) {
+        return this.goalsService.create(req.user.userId, data);
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() data: Prisma.GoalUpdateInput) {
+    update(@Param('id') id: string, @Body() data: UpdateGoalDto) {
         return this.goalsService.update(id, data);
     }
 

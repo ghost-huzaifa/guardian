@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { Goal } from "@/types";
-import { ChevronRight, ChevronDown, Trophy, Calendar, Target, Flag } from "lucide-react";
+import { ChevronRight, ChevronDown, Trophy, Calendar, Target, Flag, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface GoalNodeProps {
     goal: Goal;
     level?: number;
+    onCreateSubGoal: (parentId: string, parentType: Goal['goalType']) => void;
 }
 
 const GoalTypeIcon = ({ type }: { type: Goal['goalType'] }) => {
@@ -21,7 +22,7 @@ const GoalTypeIcon = ({ type }: { type: Goal['goalType'] }) => {
     }
 };
 
-const GoalNode = ({ goal, level = 0 }: GoalNodeProps) => {
+const GoalNode = ({ goal, level = 0, onCreateSubGoal }: GoalNodeProps) => {
     const [isExpanded, setIsExpanded] = useState(true);
     const hasChildren = (goal.subGoals && goal.subGoals.length > 0) || (goal.tasks && goal.tasks.length > 0);
 
@@ -75,6 +76,19 @@ const GoalNode = ({ goal, level = 0 }: GoalNodeProps) => {
                             <span className="rounded-md bg-bg-secondary px-2 py-0.5 text-[10px] font-bold text-text-muted">
                                 {goal.progressPercent}%
                             </span>
+
+                            {goal.goalType !== 'WEEKLY' && (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onCreateSubGoal(goal.goalId, goal.goalType);
+                                    }}
+                                    className="invisible ml-auto flex h-6 w-6 items-center justify-center rounded-lg hover:bg-white/10 group-hover:visible"
+                                    title="Add Sub-goal"
+                                >
+                                    <Plus className="h-4 w-4 text-text-muted" />
+                                </button>
+                            )}
                         </div>
                         {goal.description && (
                             <p className="truncate text-xs text-text-muted">
@@ -105,7 +119,12 @@ const GoalNode = ({ goal, level = 0 }: GoalNodeProps) => {
                             className="ml-8 border-l-2 border-white/5 pl-6 pt-4"
                         >
                             {goal.subGoals?.map((subGoal) => (
-                                <GoalNode key={subGoal.goalId} goal={subGoal} level={level + 1} />
+                                <GoalNode
+                                    key={subGoal.goalId}
+                                    goal={subGoal}
+                                    level={level + 1}
+                                    onCreateSubGoal={onCreateSubGoal}
+                                />
                             ))}
                         </motion.div>
                     )}
@@ -115,7 +134,12 @@ const GoalNode = ({ goal, level = 0 }: GoalNodeProps) => {
     );
 };
 
-export const GoalTree = ({ goals }: { goals: Goal[] }) => {
+interface GoalTreeProps {
+    goals: Goal[];
+    onCreateSubGoal: (parentId: string, parentType: Goal['goalType']) => void;
+}
+
+export const GoalTree = ({ goals, onCreateSubGoal }: GoalTreeProps) => {
     if (!goals?.length) {
         return (
             <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-white/10 p-12 text-center">
@@ -131,7 +155,11 @@ export const GoalTree = ({ goals }: { goals: Goal[] }) => {
     return (
         <div className="space-y-2">
             {goals.map((goal) => (
-                <GoalNode key={goal.goalId} goal={goal} />
+                <GoalNode
+                    key={goal.goalId}
+                    goal={goal}
+                    onCreateSubGoal={onCreateSubGoal}
+                />
             ))}
         </div>
     );
